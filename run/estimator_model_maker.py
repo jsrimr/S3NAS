@@ -24,7 +24,7 @@ from graph import net_builder
 
 FLAGS = flags.FLAGS
 
-
+import neptune
 class EstimatorModelMaker(object):
     """
     self.global_step : global_step. initialized in get_model_fn
@@ -131,6 +131,7 @@ class EstimatorModelMaker(object):
 
         num_params = np.sum([np.prod(v.shape) for v in tf.trainable_variables()])
         tf.logging.info('number of trainable parameters: {}'.format(num_params))
+        neptune.log_text("#Params",str(num_params ))
 
         return logits, latency_val, tensordict_to_write_on_tensorboard
 

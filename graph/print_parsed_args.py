@@ -19,6 +19,7 @@ FLAGS = flags.FLAGS
 from graph.net_builder import get_model_args_and_gparams
 from util.io_utils import tf_open_file_in_path
 import json
+import neptune
 
 flags.DEFINE_string(
     'parse_search_dir',
@@ -57,4 +58,10 @@ def print_parse(unused_args):
 
 
 if __name__ == "__main__":
+    neptune.init(project_qualified_name='jeffrey/S3NAS',
+            api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vdWkubmVwdHVuZS5haSIsImFwaV91cmwiOiJodHRwczovL3VpLm5lcHR1bmUuYWkiLCJhcGlfa2V5IjoiNDA0MjIyMmQtZmFkNC00NzlmLWJmNTctMjJmZTcwNDg4OTc5In0=",
+        #  api_token=os.environ.get("NEPTUNE_API_TOKEN"),
+            )
+
+    neptune.create_experiment()
     app.run(print_parse)

@@ -12,6 +12,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import json
+import neptune
 
 import tensorflow as tf
 from absl import flags
@@ -50,7 +51,8 @@ def build_logits_latency_tensordict(images, model_json_path, training, override_
       tensordict_to_write_on_tensorboard: tensors you want to watch on tensorboard.
     """
     assert isinstance(images, tf.Tensor)
-    model_args, global_params = get_model_args_and_gparams(model_json_path, override_params)
+    model_args, global_params = get_model_args_and_gparams(
+        model_json_path, override_params)
     if model_dir:
         save_model_args(model_args, model_dir)
 
@@ -64,7 +66,9 @@ def build_logits_latency_tensordict(images, model_json_path, training, override_
         tf.logging.info("built model with trainable params %d and flops %d" %
                         (model.get_params_considering_bnbias(input_shape),
                          model.get_flops(input_shape)))
-
+        neptune.log_text(
+            "params", str(model.get_params_considering_bnbias(input_shape)))
+        neptune.log_text("flops", str(model.get_flops(input_shape)))
         tensordict = {}
         log_searchableblock_tensor = log_searchableblock_tensor.lower()
         if log_searchableblock_tensor == 'all':
@@ -84,7 +88,8 @@ def build_logits_latency_tensordict(images, model_json_path, training, override_
             from graph.latency_estimator import get_constraint_estimator
             latency_estimator = get_constraint_estimator(FLAGS.constraint.lower(), FLAGS.constraint_parse_key,
                                                          FLAGS.constraint_div_unit)
-            total_latency, tensordict_latency = latency_estimator.estim_constraint(model, in_w)
+            total_latency, tensordict_latency = latency_estimator.estim_constraint(
+                model, in_w)
 
             tensordict.update(tensordict_latency)
 
@@ -96,11 +101,13 @@ def get_model_args_and_gparams(model_json_path, override_params):
     Gets model_args from json file.
     Supports both tensorflow-style stages_args and more human-readable style.
     """
-    model_json = json.load(tf_open_file_in_path("", model_json_path, "r"), object_pairs_hook=AttrDict)
+    model_json = json.load(tf_open_file_in_path(
+        "", model_json_path, "r"), object_pairs_hook=AttrDict)
     model_args = AttrDict(model_json)
 
     decoder = BlockArgsDecoder()
-    model_args.stages_args = decoder.decode_to_stages_args(model_args.stages_args)
+    model_args.stages_args = decoder.decode_to_stages_args(
+        model_args.stages_args)
 
     gparams_dict = parse_gparams_from_model_args(model_args)
     global_params = GlobalParams(**gparams_dict)
@@ -109,7 +116,9 @@ def get_model_args_and_gparams(model_json_path, override_params):
         global_params = global_params._replace(**override_params)
 
     tf.logging.info('global_params= %s', global_params)
+    neptune.log_text("global_params", str(global_params))
     tf.logging.info('stages_args= %s', model_args.stages_args)
+    neptune.log_text("stages_args", str(model_args.stages_args))
     return model_args, global_params
 
 
@@ -123,7 +132,8 @@ def parse_gparams_from_model_args(model_args):
     gparams_dict = {}
 
     for key in ['act_fn', 'se_inner_act_fn', 'se_gating_fn']:
-        gparams_dict = update_gparams_if_exist_in_modelargs(gparams_dict, model_args, key)
+        gparams_dict = update_gparams_if_exist_in_modelargs(
+            gparams_dict, model_args, key)
 
     return gparams_dict
 

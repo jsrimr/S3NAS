@@ -18,6 +18,7 @@ from absl import flags
 from run.estimator_model_maker import EstimatorModelMaker
 from run.train_eval import TrainNEval
 from util.log_utils import init_tflog
+import neptune
 
 FLAGS = flags.FLAGS
 
@@ -254,7 +255,7 @@ flags.DEFINE_string(
     help=('in the lookup files, we will access constraint values via this given key'))
 
 flags.DEFINE_float(
-    'constraint_div_unit', default=1e6,
+    'constraint_div_unit', default=1e3,
     help=('we may have to divide constraint values due to units'))
 
 flags.DEFINE_string(
@@ -266,6 +267,15 @@ flags.DEFINE_string(
 def main(unused_argv):
     use_tpu = FLAGS.tpu or FLAGS.use_tpu
     init_tflog(FLAGS.model_dir, use_tpu)
+
+    # todo : get neputune config as envVariable
+    neptune.init(project_qualified_name='jeffrey/S3NAS',
+             api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vdWkubmVwdHVuZS5haSIsImFwaV91cmwiOiJodHRwczovL3VpLm5lcHR1bmUuYWkiLCJhcGlfa2V5IjoiNDA0MjIyMmQtZmFkNC00NzlmLWJmNTctMjJmZTcwNDg4OTc5In0=",
+            #  api_token=os.environ.get("NEPTUNE_API_TOKEN"),
+             )
+
+    neptune.create_experiment()
+
 
     if FLAGS.use_nas_modelmaker:
         FLAGS.warmup_epochs = -1

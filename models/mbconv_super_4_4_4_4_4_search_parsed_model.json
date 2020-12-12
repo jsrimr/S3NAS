@@ -1,0 +1,313 @@
+{
+    "img_size": 224,
+    "img_c": 3,
+    "n_classes": 1000,
+    "first_conv": {
+        "cls": "Conv2D",
+        "output_filters": 32,
+        "kernel_size": 7,
+        "strides": 2
+    },
+    "stages_args": [
+        {
+            "cls": "BasicStage",
+            "blocks_args": [
+                {
+                    "num_repeat": 1,
+                    "conv_type": "MBConvBlock",
+                    "kernel_size": 3,
+                    "input_filters": 32,
+                    "output_filters": 32,
+                    "expand_ratio": 4,
+                    "strides": [
+                        2,
+                        2
+                    ],
+                    "id_skip": true,
+                    "se_ratio": null,
+                    "act_fn": null
+                },
+                {
+                    "num_repeat": 1,
+                    "conv_type": "MBConvBlock",
+                    "kernel_size": 3,
+                    "input_filters": 32,
+                    "output_filters": 32,
+                    "expand_ratio": 2,
+                    "strides": [
+                        1,
+                        1
+                    ],
+                    "id_skip": true,
+                    "se_ratio": null,
+                    "act_fn": null
+                },
+                {
+                    "num_repeat": 1,
+                    "conv_type": "MBConvBlock",
+                    "kernel_size": 3,
+                    "input_filters": 32,
+                    "output_filters": 32,
+                    "expand_ratio": 2,
+                    "strides": [
+                        1,
+                        1
+                    ],
+                    "id_skip": true,
+                    "se_ratio": null,
+                    "act_fn": null
+                },
+                {
+                    "num_repeat": 1,
+                    "conv_type": "MBConvBlock",
+                    "kernel_size": 3,
+                    "input_filters": 32,
+                    "output_filters": 32,
+                    "expand_ratio": 2,
+                    "strides": [
+                        1,
+                        1
+                    ],
+                    "id_skip": true,
+                    "se_ratio": null,
+                    "act_fn": null
+                }
+            ]
+        },
+        {
+            "cls": "BasicStage",
+            "blocks_args": [
+                {
+                    "num_repeat": 1,
+                    "conv_type": "MBConvBlock",
+                    "kernel_size": 5,
+                    "input_filters": 32,
+                    "output_filters": 64,
+                    "expand_ratio": 2,
+                    "strides": [
+                        2,
+                        2
+                    ],
+                    "id_skip": true,
+                    "se_ratio": null,
+                    "act_fn": null
+                },
+                {
+                    "num_repeat": 1,
+                    "conv_type": "MBConvBlock",
+                    "kernel_size": 5,
+                    "input_filters": 64,
+                    "output_filters": 64,
+                    "expand_ratio": 2,
+                    "strides": [
+                        1,
+                        1
+                    ],
+                    "id_skip": true,
+                    "se_ratio": null,
+                    "act_fn": null
+                },
+                {
+                    "num_repeat": 1,
+                    "conv_type": "MBConvBlock",
+                    "kernel_size": 5,
+                    "input_filters": 64,
+                    "output_filters": 64,
+                    "expand_ratio": 2,
+                    "strides": [
+                        1,
+                        1
+                    ],
+                    "id_skip": true,
+                    "se_ratio": null,
+                    "act_fn": null
+                },
+                {
+                    "num_repeat": 1,
+                    "conv_type": "MBConvBlock",
+                    "kernel_size": 5,
+                    "input_filters": 64,
+                    "output_filters": 64,
+                    "expand_ratio": 2,
+                    "strides": [
+                        1,
+                        1
+                    ],
+                    "id_skip": true,
+                    "se_ratio": null,
+                    "act_fn": null
+                }
+            ]
+        },
+        {
+            "cls": "BasicStage",
+            "blocks_args": [
+                {
+                    "num_repeat": 1,
+                    "conv_type": "MBConvBlock",
+                    "kernel_size": 5,
+                    "input_filters": 64,
+                    "output_filters": 128,
+                    "expand_ratio": 2,
+                    "strides": [
+                        2,
+                        2
+                    ],
+                    "id_skip": true,
+                    "se_ratio": null,
+                    "act_fn": null
+                },
+                {
+                    "num_repeat": 1,
+                    "conv_type": "MBConvBlock",
+                    "kernel_size": 3,
+                    "input_filters": 128,
+                    "output_filters": 128,
+                    "expand_ratio": 2,
+                    "strides": [
+                        1,
+                        1
+                    ],
+                    "id_skip": true,
+                    "se_ratio": null,
+                    "act_fn": null
+                },
+                {
+                    "num_repeat": 1,
+                    "conv_type": "MBConvBlock",
+                    "kernel_size": 3,
+                    "input_filters": 128,
+                    "output_filters": 128,
+                    "expand_ratio": 2,
+                    "strides": [
+                        1,
+                        1
+                    ],
+                    "id_skip": true,
+                    "se_ratio": null,
+                    "act_fn": null
+                }
+            ]
+        },
+        {
+            "cls": "BasicStage",
+            "blocks_args": [
+                {
+                    "num_repeat": 1,
+                    "conv_type": "MBConvBlock",
+                    "kernel_size": 5,
+                    "input_filters": 128,
+                    "output_filters": 160,
+                    "expand_ratio": 4,
+                    "strides": [
+                        1,
+                        1
+                    ],
+                    "id_skip": true,
+                    "se_ratio": null,
+                    "act_fn": null
+                },
+                {
+                    "num_repeat": 1,
+                    "conv_type": "MBConvBlock",
+                    "kernel_size": 3,
+                    "input_filters": 160,
+                    "output_filters": 160,
+                    "expand_ratio": 2,
+                    "strides": [
+                        1,
+                        1
+                    ],
+                    "id_skip": true,
+                    "se_ratio": null,
+                    "act_fn": null
+                },
+                {
+                    "num_repeat": 1,
+                    "conv_type": "MBConvBlock",
+                    "kernel_size": 3,
+                    "input_filters": 160,
+                    "output_filters": 160,
+                    "expand_ratio": 2,
+                    "strides": [
+                        1,
+                        1
+                    ],
+                    "id_skip": true,
+                    "se_ratio": null,
+                    "act_fn": null
+                }
+            ]
+        },
+        {
+            "cls": "BasicStage",
+            "blocks_args": [
+                {
+                    "num_repeat": 1,
+                    "conv_type": "MBConvBlock",
+                    "kernel_size": 5,
+                    "input_filters": 160,
+                    "output_filters": 256,
+                    "expand_ratio": 4,
+                    "strides": [
+                        2,
+                        2
+                    ],
+                    "id_skip": true,
+                    "se_ratio": null,
+                    "act_fn": null
+                },
+                {
+                    "num_repeat": 1,
+                    "conv_type": "MBConvBlock",
+                    "kernel_size": 5,
+                    "input_filters": 256,
+                    "output_filters": 256,
+                    "expand_ratio": 4,
+                    "strides": [
+                        1,
+                        1
+                    ],
+                    "id_skip": true,
+                    "se_ratio": null,
+                    "act_fn": null
+                },
+                {
+                    "num_repeat": 1,
+                    "conv_type": "MBConvBlock",
+                    "kernel_size": 5,
+                    "input_filters": 256,
+                    "output_filters": 256,
+                    "expand_ratio": 4,
+                    "strides": [
+                        1,
+                        1
+                    ],
+                    "id_skip": true,
+                    "se_ratio": null,
+                    "act_fn": null
+                },
+                {
+                    "num_repeat": 1,
+                    "conv_type": "MBConvBlock",
+                    "kernel_size": 5,
+                    "input_filters": 256,
+                    "output_filters": 256,
+                    "expand_ratio": 4,
+                    "strides": [
+                        1,
+                        1
+                    ],
+                    "id_skip": true,
+                    "se_ratio": null,
+                    "act_fn": null
+                }
+            ]
+        }
+    ],
+    "feature_mix_layer": {
+        "cls": "Conv2D",
+        "output_filters": 1280,
+        "kernel_size": 1
+    }
+}

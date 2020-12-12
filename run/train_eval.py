@@ -12,7 +12,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import time
-
+import neptune
 import tensorflow as tf
 from absl import flags
 from tensorflow.core.protobuf import rewriter_config_pb2
@@ -39,11 +39,15 @@ class TrainNEval(object):
     def train_and_eval(self):
         assert FLAGS.mode == 'train_and_eval'
 
-        current_step = estimator._load_global_step_from_checkpoint_dir(FLAGS.model_dir)
+        current_step = estimator._load_global_step_from_checkpoint_dir(
+            FLAGS.model_dir)
 
-        train_epochs = self.params['train_steps'] / self.params['steps_per_epoch']
+        train_epochs = self.params['train_steps'] / \
+            self.params['steps_per_epoch']
         tf.logging.info('Training for %d steps (%.2f epochs in total). Current step %d.',
                         self.params['train_steps'], train_epochs, current_step)
+
+        # neptune.log_text('Train INFO', f"Training for {self.params['train_steps']} steps {train_epochs} epochs in total)\n Current step {current_step}")
 
         start_timestamp = time.time()  # This time will include compilation time
 
@@ -51,15 +55,20 @@ class TrainNEval(object):
         while current_step < self.params['train_steps']:
             # Train for up to steps_per_eval number of steps.
             # At the end of training, a checkpoint will be written to --model_dir.
-            steps_per_eval = int(FLAGS.epochs_per_eval * self.params['steps_per_epoch'])
-            next_eval = (current_step // steps_per_eval) * steps_per_eval + steps_per_eval
+            steps_per_eval = int(FLAGS.epochs_per_eval *
+                                 self.params['steps_per_epoch'])
+            next_eval = (current_step // steps_per_eval) * \
+                steps_per_eval + steps_per_eval
             print("next eval point : ", next_eval)
             next_checkpoint = min(next_eval, self.params['train_steps'])
-            self.est.train(input_fn=self.imagenet_train.input_fn, max_steps=int(next_checkpoint))
+            self.est.train(input_fn=self.imagenet_train.input_fn,
+                           max_steps=int(next_checkpoint))
             current_step = next_checkpoint
 
             tf.logging.info('Finished training up to step %d. Elapsed seconds %d.',
                             next_checkpoint, int(time.time() - start_timestamp))
+            neptune.log_text('train INFO', 'Finished training up to step {}. Elapsed seconds {}'.format(
+                next_checkpoint, int(time.time() - start_timestamp)))
 
             eval_results = self.eval()
 
@@ -69,6 +78,7 @@ class TrainNEval(object):
         elapsed_time = int(time.time() - start_timestamp)
         tf.logging.info('Finished training up to step %d. Elapsed seconds %d.',
                         self.params['train_steps'], elapsed_time)
+        neptune.log_text('train INFO', 'Finished training up to step {} . Elapsed seconds {}'.format(self.params["train_steps"], elapsed_time))
 
         tf.keras.backend.clear_session()
         tf.reset_default_graph()
@@ -87,8 +97,12 @@ class TrainNEval(object):
             steps=FLAGS.num_eval_images // FLAGS.eval_batch_size,
             name=eval_name)
         tf.logging.info('Eval results for final: %s', eval_results)
-        io_utils.archive_ckpt(eval_results, eval_results['top_1_accuracy'], FLAGS.model_dir, FLAGS.keep_archive_max)
-
+        io_utils.archive_ckpt(
+            eval_results, eval_results['top_1_accuracy'], FLAGS.model_dir, FLAGS.keep_archive_max)
+        neptune.log_metric('top_1_accuracy', eval_results['top_1_accuracy'])
+        neptune.log_metric('top_5_accuracy', eval_results['top_5_accuracy'])
+        neptune.log_metric('loss', eval_results['loss'])
+        neptune.log_metric('global_step', eval_results['global_step'])
         return eval_results
 
     def set_and_get_device_config(self):
@@ -127,7 +141,7 @@ class TrainNEval(object):
             tpu_config=tf.contrib.tpu.TPUConfig(
                 iterations_per_loop=FLAGS.iterations_per_loop,
                 per_host_input_for_training=tf.contrib.tpu.InputPipelineConfig
-                    .PER_HOST_V2),
+                .PER_HOST_V2),
             train_distribute=train_distribution,
             eval_distribute=None
         )  # pylint: disable=line-too-long
@@ -137,9 +151,11 @@ class TrainNEval(object):
 
     def set_train_params(self):
         # Initializes model parameters.
-        steps_per_epoch = int(FLAGS.num_train_images / (FLAGS.train_batch_size * self.params['train_num_replicas']))
+        steps_per_epoch = int(
+            FLAGS.num_train_images / (FLAGS.train_batch_size * self.params['train_num_replicas']))
         train_steps = int(FLAGS.train_epochs * steps_per_epoch)
-        supergraph_train_steps = int(FLAGS.supergraph_train_epochs * steps_per_epoch)
+        supergraph_train_steps = int(
+            FLAGS.supergraph_train_epochs * steps_per_epoch)
         print("train steps : ", train_steps)
 
         self.params.update(dict(steps_per_epoch=steps_per_epoch,
