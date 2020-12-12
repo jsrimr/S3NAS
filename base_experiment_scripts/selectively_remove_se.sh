@@ -6,7 +6,7 @@ export DATA_DIR=WRITE_IMGS_DIR
 export IMAGENET_SETTINGS="--log_excitation_names_containing=all --data_path=${DATA_DIR}"
 
 export SAVE_FOLDER=WRITE_TMP_FOLDER
-export IMG_SIZE=WRITE_IMAGE_SIZE
+export IMG_SIZE=224
 
 export TRAIN_DIR=WRITE_CKPT_DIR
 export MODEL_NAME=WRITE_MODEL_NAME
